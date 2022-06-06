@@ -12,7 +12,7 @@ const queenSchema = new mongoose.Schema(
         },
         image: { type: String, required: true },
         owner: {
-            type: Schema.Types.ObjectID,
+            type: mongoose.Schema.Types.ObjectID,
             ref: 'User',
         }
     },

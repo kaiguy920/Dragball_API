@@ -7,13 +7,13 @@ const teamSchema = new mongoose.Schema(
         teamMembers:
             [
                 {
-                    type: Schema.Types.ObjectId,
+                    type: mongoose.Schema.Types.ObjectId,
                     ref: 'Queen'
                 }
             ],
 
         owner: {
-            type: Schema.Types.ObjectID,
+            type: mongoose.Schema.Types.ObjectID,
             ref: 'User',
         }
     },

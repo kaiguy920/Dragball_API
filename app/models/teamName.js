@@ -7,7 +7,7 @@ const teamNameSchema = new mongoose.Schema(
         name: { type: String },
 
         owner: {
-            type: Schema.Types.ObjectID,
+            type: mongoose.Schema.Types.ObjectID,
             ref: 'User',
         }
     },

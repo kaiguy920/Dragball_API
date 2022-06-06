@@ -21,4 +21,4 @@ const queenSchema = new mongoose.Schema(
     }
 )
 
-module.exports = mongoose.model('queen', queenSchema)
+module.exports = mongoose.model('Queen', queenSchema)

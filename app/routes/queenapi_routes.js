@@ -21,7 +21,7 @@ const router = express.Router()
 
 // INDEX
 // GET /dragball
-router.get('/dragball', async (req, res) => {
+router.get('/dragball', async (req, res, next) => {
     await axios
         .get(`http://www.nokeynoshade.party/api/queens/all`)
         .then(response => {
@@ -31,7 +31,7 @@ router.get('/dragball', async (req, res) => {
 })
 
 // SHOW 
-router.get('/dragball/:id', async (req, res) => {
+router.get('/dragball/:id', async (req, res, next) => {
     const id = req.params.id
     await axios
         .get(`http://www.nokeynoshade.party/api/queens/${id}`)

@@ -31,7 +31,7 @@ const router = express.Router()
 
 // INDEX
 // GET /myfaves/<user_id>
-router.get('/myfaves/:userId', (req, res) => {
+router.get('/dragball/myfaves/:userId', (req, res, next) => {
     const userId = req.params.userId
     Queen.find({ owner: userId })
         .populate('owner')

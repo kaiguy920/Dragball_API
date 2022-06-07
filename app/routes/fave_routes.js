@@ -32,7 +32,9 @@ const router = express.Router()
 // INDEX
 // GET /myfaves/<user_id>
 router.get('/myfaves/:userId', (req, res) => {
+    const userId = req.params.userId
     Queen.find({ owner: userId })
+        .populate('owner')
         .then((queens) => {
             return queens.map((queens) => queens.toObject())
         })
@@ -43,33 +45,36 @@ router.get('/myfaves/:userId', (req, res) => {
 
 })
 
-// create -> POST route that actually calls the db and makes a new document of Queen to render to the fave's
-router.post('/myfaves/:userId', (req, res) => {
 
-    Queen.create(req.body)
-        .then((queen) => {
-            console.log('this was returned from adding to fave\n', queen)
-            res.redirect('/queen/fave/mine')
+// ADD to team
+router.post('/myteam/:queenId', requireToken, (req, res, next) => {
+    req.body.owner = req.user.id
+    const queenId = req.params.queenId
+    const userId = req.session
+
+    Team.updateOne({ owner: userId }), { $addToSet: { teamMembers: queenId } }
+        .then((team) => {
+            requireOwnership(req, team)
+            res.status(201).json({ team: team.toObject() })
         })
-        .catch(error => {
-            res.redirect(`/error?error=${error}`)
-        })
+        .catch(next)
 })
 
-
 // DELETE route
-router.delete('/fave/mine/:id', (req, res) => {
+router.delete('/myfaves/:queenId', (req, res, next) => {
     // get the queen id
-    const queenId = req.params.id
+    const queenId = req.params.queenId
     // delete the queen
-    Queen.findByIdAndRemove(queenId)
+    Queen.findById(queenId)
+
+        .then(handle404)
         .then((queen) => {
-            console.log('this is the response from FBID', queen)
-            res.redirect('/queen/fave/mine')
+            requireOwnership(req, queen)
+            queen.remove()
         })
-        .catch(error => {
-            res.redirect(`/error?error=${error}`)
-        })
+        // send 204 no content
+        .then(() => res.sendStatus(204))
+        .catch(next)
 })
 
 module.exports = router

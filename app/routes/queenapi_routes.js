@@ -31,6 +31,7 @@ router.get('/dragball', async (req, res, next) => {
 })
 
 // SHOW 
+// GET /dragball/89
 router.get('/dragball/:id', async (req, res, next) => {
     const id = req.params.id
     await axios
@@ -42,5 +43,17 @@ router.get('/dragball/:id', async (req, res, next) => {
 })
 
 // ADD TO FAVE
+// CREATE --> for favorites list route that actually calls the db and makes a new document
+// POST /dragball/addfaves
+router.post('/dragball/addfave', requireToken, (req, res, next) => {
+    req.body.queen.owner = req.user.id
+
+    Queen.create(req.body.queen)
+        .then((queen) => {
+            requireOwnership(req, queen)
+            res.status(201).json({ queen: queen.toObject() })
+        })
+        .catch(next)
+})
 
 module.exports = router

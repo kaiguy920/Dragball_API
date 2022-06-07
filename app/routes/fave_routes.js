@@ -47,23 +47,33 @@ router.get('/dragball/myfaves/:userId', (req, res, next) => {
 
 
 // ADD to team
-router.post('/myteam/:queenId', requireToken, (req, res, next) => {
-    req.body.owner = req.user.id
-    const queenId = req.params.queenId
-    const userId = req.session
+// POST /dragball/myteam/89
+router.post('/dragball/myteam/:_id', requireToken, (req, res, next) => {
+    const userId = req.user.id
+    const queenId = req.params._id
+    req.body.owner = userId
+    req.body.teamMembers = queenId
+    console.log('req.user.id', req.user.id);
 
-    Team.updateOne({ owner: userId }), { $addToSet: { teamMembers: queenId } }
-        .then((team) => {
-            requireOwnership(req, team)
-            res.status(201).json({ team: team.toObject() })
+    Queen.findById(queenId)
+        .then(queen => {
+            console.log('this is queen', queen)
+            Team.updateOne({ owner: userId })
+                .then((team) => {
+                    console.log('this was returned from create', team)
+                    console.log("team owner", team.owner);
+                    // team.teamMembers.push(queen._id)
+                    // team.save()
+                    res.status(201).json({ team: team.toObject() })
+                })
+                .catch(next)
         })
-        .catch(next)
 })
 
 // DELETE route
-router.delete('/myfaves/:queenId', (req, res, next) => {
+router.delete('/dragball/myfaves/:id', requireToken, (req, res, next) => {
     // get the queen id
-    const queenId = req.params.queenId
+    const queenId = req.params.id
     // delete the queen
     Queen.findById(queenId)
 

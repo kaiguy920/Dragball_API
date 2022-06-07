@@ -13,9 +13,11 @@ const mongoose = require('mongoose')
 // this is a collection of methods that help us detect situations when we need
 // to throw a custom error
 const customErrors = require('../../lib/custom_errors')
-
+// require axios for api calls
 const axios = require('axios')
 
+const requireOwnership = customErrors.requireOwnership
+const requireToken = passport.authenticate('bearer', { session: false })
 
 const router = express.Router()
 
@@ -44,11 +46,19 @@ router.get('/dragball/:id', async (req, res, next) => {
 
 // ADD TO FAVE
 // CREATE --> for favorites list route that actually calls the db and makes a new document
-// POST /dragball/addfaves
-router.post('/dragball/addfave', requireToken, (req, res, next) => {
-    req.body.queen.owner = req.user.id
+// POST /dragball/addfave/89
+router.post('/dragball/addfave/:id', requireToken, async (req, res, next) => {
+    const id = req.params.id
+    await axios
+        .get(`http://www.nokeynoshade.party/api/queens/${id}`)
+        .then(res => {
+            req.body.image = res.data.image_url
+            req.body.name = res.data.name
+        })
+    req.body.owner = req.user.id
+    req.body.queenId = req.params.id
 
-    Queen.create(req.body.queen)
+    Queen.create(req.body)
         .then((queen) => {
             requireOwnership(req, queen)
             res.status(201).json({ queen: queen.toObject() })

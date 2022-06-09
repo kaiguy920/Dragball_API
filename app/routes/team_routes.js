@@ -44,6 +44,16 @@ router.get('/dragball/myteam/:userId', (req, res, next) => {
 
 })
 
+// DELETE route
+// delete queen from teamMembers
+router.delete('/dragball/myteam/:queenId', requireToken, (req, res, next) => {
 
+    const queenId = req.params.queenId
+    const userId = req.user.id
+    // delete the queen
+    Team.updateOne({ owner: userId }, { $pull: { teamMembers: queenId } })
+        .then(() => res.sendStatus(204))
+        .catch(next)
+})
 
 module.exports = router

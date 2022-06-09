@@ -47,60 +47,24 @@ router.get('/dragball/myfaves/:userId', (req, res, next) => {
 
 // ADD to team
 // POST /dragball/myteam/89
-// router.post('/dragball/myteam/:queenId', requireToken, async (req, res, next) => {
-//     const userId = req.user._id
-//     const queenId = req.params.queenId
-//     req.body.owner = userId
-//     // req.body.teamMembers = queenId
-//     console.log('req.user.id', req.user.id);
-
-//     Queen.findById(queenId)
-//         .then(queen => {
-//             console.log('this is queen', queen)
-//             Team.updateOne({ owner: userId })
-//                 .then((team) => {
-//                     console.log('this was returned from create', team)
-//                     console.log("team owner", team.owner);
-//                     // team.teamMembers.push(queen._id)
-//                     // team.save()
-//                     res.status(201).json({ team: team.toObject() })
-//                 })
-//                 .catch(next)
-//         })
-// })
-
-
 router.post('/dragball/myteam/:queenId', requireToken, async (req, res, next) => {
+    const userId = req.user.id
+    const queenId = req.params.queenId
+    req.body.owner = userId
+    req.body.teamMembers = queenId
+    console.log('req.user.id', req.user.id);
 
-    if (!Team) {
-        req.body.owner = req.user.id
-        req.body.teamMembers = req.params.queenId
+    Queen.findById(queenId)
+        .then(queen => {
+            console.log('this is queen', queen)
+            Team.updateOne({ owner: userId }, { $push: { teamMembers: queenId } })
 
-        await Team.create(req.body)
-            // respond to succesful `create` with status 201 and JSON of new "place"
-            .then((team) => {
-                res.status(201).json({ team: team.toObject() })
-            })
-            .catch(next)
-    }
-    else {
-        await Queen.findById(req.params.queenId)
-            .then(queen => {
-                console.log('this is queen', queen)
-                Team.updateOne({ owner: req.user.id })
-                    // .then((team) => {
-                    //     console.log('this was returned from create', team)
-                    //     console.log("team owner", team.owner);
-                    // team.teamMembers.push(queen._id)
-                    // team.save()
-                    // res.status(201).json({ team: team.toObject() })
-                    .then(() => res.sendStatus(204))
-                    .catch(next)
-            })
-
-        // })
-    }
+                .then(() => res.sendStatus(204))
+                .catch(next)
+        })
 })
+
+
 
 // DELETE route
 router.delete('/dragball/myfaves/:id', requireToken, (req, res, next) => {

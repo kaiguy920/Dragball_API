@@ -30,7 +30,19 @@ const requireToken = passport.authenticate('bearer', { session: false })
 const router = express.Router()
 
 
+// INDEX
+// GET /myteam/<user_id>
+router.get('/dragball/myteam/:userId', (req, res, next) => {
+    const userId = req.params.userId
+    Team.find({ owner: userId })
+        .populate('teamMembers')
+        .then((team) => {
+            return team.map((team) => team.toObject())
+        })
+        .then((team) => res.status(200).json({ team: team }))
+        .catch(next)
 
+})
 
 
 

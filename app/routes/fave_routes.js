@@ -20,6 +20,7 @@ const requireOwnership = customErrors.requireOwnership
 // this is middleware that will remove blank fields from `req.body`, e.g.
 // { example: { title: '', text: 'foo' } } -> { example: { text: 'foo' } }
 const removeBlanks = require('../../lib/remove_blank_fields')
+const user = require('../models/user')
 // passing this as a second argument to `router.<verb>` will make it
 // so that a token MUST be passed for that route to be available
 // it will also set `req.user`
@@ -74,6 +75,7 @@ router.post('/dragball/addteam/:id', requireToken, async (req, res, next) => {
     console.log('req.user.id', req.user.id);
     console.log("queenId in api add to team", queenId);
 
+
     await Team.find({ owner: userId })
     if (!Team.owner) {
         Team.create(req.body)
@@ -81,8 +83,8 @@ router.post('/dragball/addteam/:id', requireToken, async (req, res, next) => {
                 res.status(201).json({ team: team.toObject() })
             })
     } else if (Team.owner === userId) {
-        console.log("this is team", Team);
-        Queen.findById(queenId)
+        console.log("this is team", Team.teamMembers);
+        await Queen.findById(queenId)
             .then(queen => {
                 console.log('this is queen', queen)
 
@@ -94,6 +96,7 @@ router.post('/dragball/addteam/:id', requireToken, async (req, res, next) => {
             })
     }
 })
+
 // DELETE route
 router.delete('/dragball/myfaves/:id', requireToken, (req, res, next) => {
     // get the queen id

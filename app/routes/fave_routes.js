@@ -48,25 +48,6 @@ router.get('/dragball/myfaves/:userId', (req, res, next) => {
 
 // ADD to team
 // POST /dragball/myteam/89
-// router.post('/dragball/addteam/:id', requireToken, async (req, res, next) => {
-//     const userId = req.user.id
-//     const queenId = req.params.id
-//     req.body.owner = userId
-//     req.body.teamMembers = queenId
-//     console.log('req.user.id', req.user.id);
-//     console.log("queenId in api add to team", queenId);
-
-//     Queen.findById(queenId)
-//         .then(queen => {
-//             console.log('this is queen', queen)
-
-//             Team.updateOne({ owner: userId }, { $push: { teamMembers: queenId } })
-
-//                 .then(() => res.sendStatus(204))
-//                 .catch(next)
-//         })
-// })
-
 router.post('/dragball/addteam/:id', requireToken, async (req, res, next) => {
     const userId = req.user.id
     const queenId = req.params.id
@@ -75,27 +56,46 @@ router.post('/dragball/addteam/:id', requireToken, async (req, res, next) => {
     console.log('req.user.id', req.user.id);
     console.log("queenId in api add to team", queenId);
 
+    Queen.findById(queenId)
+        .then(queen => {
+            console.log('this is queen', queen)
 
-    await Team.find({ owner: userId })
-    if (!Team.owner) {
-        Team.create(req.body)
-            .then((team) => {
-                res.status(201).json({ team: team.toObject() })
-            })
-    } else if (Team.owner === userId) {
-        console.log("this is team", Team.teamMembers);
-        await Queen.findById(queenId)
-            .then(queen => {
-                console.log('this is queen', queen)
+            Team.updateOne({ owner: userId }, { $push: { teamMembers: queenId } }, { upsert: true })
 
-                Team.updateOne({ owner: userId }, { $push: { teamMembers: queenId } })
-
-                    .then(() => res.sendStatus(204))
-                    .catch(next)
-
-            })
-    }
+                .then(() => res.sendStatus(204))
+                .catch(next)
+        })
 })
+
+// router.post('/dragball/addteam/:id', requireToken, async (req, res, next) => {
+//     const userId = req.user.id
+//     const queenId = req.params.id
+//     req.body.owner = userId
+//     req.body.teamMembers = queenId
+//     console.log('req.user.id', req.user.id);
+//     console.log("queenId in api add to team", queenId);
+
+
+//     await Team.find({ owner: userId })
+//     if (!Team.owner) {
+//         Team.create(req.body)
+//             .then((team) => {
+//                 res.status(201).json({ team: team.toObject() })
+//             })
+//     } else if (Team.owner === userId) {
+//         console.log("this is team", Team.teamMembers);
+//         await Queen.findById(queenId)
+//             .then(queen => {
+//                 console.log('this is queen', queen)
+
+//                 Team.updateOne({ owner: userId }, { $push: { teamMembers: queenId } })
+
+//                     .then(() => res.sendStatus(204))
+//                     .catch(next)
+
+//             })
+//     }
+// })
 
 // DELETE route
 router.delete('/dragball/myfaves/:id', requireToken, (req, res, next) => {

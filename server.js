@@ -8,6 +8,7 @@ const userRoutes = require('./app/routes/user_routes')
 const faveRoutes = require('./app/routes/fave_routes')
 const queenRoutes = require('./app/routes/queenapi_routes')
 const teamRoutes = require('./app/routes/team_routes')
+const refineIndexRoutes = require('./app/routes/refineIndex_routes')
 
 // require middleware
 const errorHandler = require('./lib/error_handler')
@@ -71,6 +72,7 @@ app.use(userRoutes)
 app.use(faveRoutes)
 app.use(queenRoutes)
 app.use(teamRoutes)
+app.use(refineIndexRoutes)
 
 // register error handling middleware
 // note that this comes after the route middlewares, because it needs to be

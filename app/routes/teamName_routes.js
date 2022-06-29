@@ -35,15 +35,15 @@ router.post('/dragball/teamname', requireToken, (req, res, next) => {
 
 
 // UPDATE
-// PATCH /dragball/teamname/624470c12ed7079ead53d4df
-router.patch('/dragball/teamname/:id', (req, res, next) => {
+// PATCH /dragball/teamname/edit
+router.patch('/dragball/teamname/:id', requireToken, (req, res, next) => {
     console.log("update req.body", req.body);
-    const teamNameId = req.body.teamName._id
+    const teamNameId = req.params.id
     console.log("team name id", teamNameId);
-    const { type, roomLocation, material, accomodates } = req.body.furniture
-    Furniture.findByIdAndUpdate(furnitureId, { type, roomLocation, material, accomodates }, { new: true })
+    const { name } = req.body.name
+    TeamName.findByIdAndUpdate(teamNameId, { name }, { new: true })
         .then(() => res.sendStatus(204))
-        .catch((error) => res.json(error))
+        .catch(next)
 })
 
 module.exports = router

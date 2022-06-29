@@ -45,13 +45,13 @@ router.get('/dragball/myteam/:userId', (req, res, next) => {
 })
 
 // PUT route to add teamName to Team object
-router.put('/dragball/teamname', requireToken, (req, res, next) => {
-    const userId = req.user.id
-    Team.updateOne({ owner: userId }, { $push: { teamName: req.body.name } })
-        .then((team) => res.status(200).json({ team: team }))
-        .catch(next)
+// router.put('/dragball/teamname', requireToken, (req, res, next) => {
+//     const userId = req.user.id
+//     Team.updateOne({ owner: userId }, { $push: { teamName: req.body.name } })
+//         .then((team) => res.status(200).json({ team: team }))
+//         .catch(next)
 
-})
+// })
 
 // DELETE route
 // delete queen from teamMembers

@@ -3,7 +3,6 @@ const User = require('./user')
 
 const teamSchema = new mongoose.Schema(
     {
-        teamName: { type: String },
         teamMembers:
             [
                 {

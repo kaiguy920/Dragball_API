@@ -23,14 +23,22 @@ const router = express.Router()
 
 // CREATE
 // POST /dragball/teamname
-router.post('/dragball/teamname', requireToken, (req, res, next) => {
+router.post('/dragball/teamname/:teamId', requireToken, (req, res, next) => {
+    const teamId = req.params.teamId
     console.log('req.body.teamName', req.body.teamName)
-    TeamName.create(req.body.teamName)
-        .then((teamName) => {
-            console.log('this was returned from create', teamName)
-            res.status(201).json({ teamName: teamName.toObject() })
+    Team.findById(teamId)
+        .then(team => {
+            team.teamName.push(req.body.teamName)
+            return team.save()
         })
+        .then(() => res.sendStatus(204))
         .catch(next)
+    // TeamName.create(req.body.teamName)
+    //     .then((teamName) => {
+    //         console.log('this was returned from create', teamName)
+    //         res.status(201).json({ teamName: teamName.toObject() })
+    //     })
+    //     .catch(next)
 })
 
 

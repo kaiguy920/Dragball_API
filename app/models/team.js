@@ -14,6 +14,10 @@ const teamSchema = new mongoose.Schema(
         owner: {
             type: mongoose.Schema.Types.ObjectID,
             ref: 'User',
+        },
+        name: {
+            type: mongoose.Schema.Types.ObjectID,
+            ref: 'teamName',
         }
     },
     { timestamps: true }

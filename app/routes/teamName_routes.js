@@ -23,22 +23,17 @@ const router = express.Router()
 
 // CREATE
 // POST /dragball/teamname
-router.post('/dragball/teamname/:teamId', requireToken, (req, res, next) => {
-    const teamId = req.params.teamId
+router.post('/dragball/teamname/:teamId', requireToken, async (req, res, next) => {
+    const userId = req.user.id
     console.log('req.body.teamName', req.body.teamName)
-    Team.findById(teamId)
-        .then(team => {
-            team.teamName.push(req.body.teamName)
-            return team.save()
-        })
-        .then(() => res.sendStatus(204))
-        .catch(next)
-    // TeamName.create(req.body.teamName)
-    //     .then((teamName) => {
-    //         console.log('this was returned from create', teamName)
-    //         res.status(201).json({ teamName: teamName.toObject() })
-    //     })
-    //     .catch(next)
+    req.body.teamName.owner = req.user.id
+
+    const { teamName } = req.body
+
+    const newTeamName = await TeamName.create(teamName);
+
+    await Team.updateOne({ owner: userId }, { $push: { name: newTeamName._id } })
+    return res.send(newTeamName)
 })
 
 

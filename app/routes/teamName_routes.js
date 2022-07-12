@@ -23,12 +23,11 @@ const router = express.Router()
 
 // CREATE
 // POST /dragball/teamname
-router.post('/dragball/teamname/:teamId', requireToken, async (req, res, next) => {
-    const userId = req.user.id
-    console.log('req.body.teamName', req.body.teamName)
-    req.body.teamName.owner = req.user.id
-
+router.post('/dragball/teamname/:userId', requireToken, async (req, res, next) => {
+    const userId = req.params.userId
     const { teamName } = req.body
+    console.log('use and abuse', req.body)
+    teamName.owner = userId
 
     const newTeamName = await TeamName.create(teamName);
 

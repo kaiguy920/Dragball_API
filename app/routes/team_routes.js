@@ -36,6 +36,7 @@ router.get('/dragball/myteam/:userId', (req, res, next) => {
     const userId = req.params.userId
     Team.find({ owner: userId })
         .populate('teamMembers')
+        .populate('name')
         .then((team) => {
             return team.map((team) => team.toObject())
         })
